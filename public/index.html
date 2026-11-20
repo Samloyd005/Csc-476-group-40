@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLC Team Collaboration — University of Ibadan</title>
+<link rel="stylesheet" href="/styles.css">
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">🎓 DLC <span>Team Collaboration</span></div>
+  <div class="top-right">
+    <span id="userLabel" class="user-label"></span>
+    <button id="logoutBtn" class="btn small ghost" hidden>Log out</button>
+  </div>
+</header>
+
+<main class="container">
+  <!-- AUTH -->
+  <section id="authView" class="card">
+    <h1>Distance Learning Centre — Team Collaboration</h1>
+    <p class="muted">One place for your DLC team: chat, tasks, files, meetings and a record of who did what. Built for mobile and low bandwidth.</p>
+    <div class="tabs">
+      <button id="tabLogin" class="tab active" type="button">Log in</button>
+      <button id="tabRegister" class="tab" type="button">Register</button>
+    </div>
+    <form id="authForm">
+      <div id="nameRow" hidden>
+        <label>Full name <input name="name" autocomplete="name"></label>
+        <label>Matric number <input name="matricNo" placeholder="e.g. DLC/2024/001"></label>
+        <label>Programme <input name="programme" placeholder="e.g. Computer Science"></label>
+        <label>Level <input name="level" placeholder="e.g. 200"></label>
+        <label>Role
+          <select name="role"><option value="student">Student</option><option value="lecturer">Lecturer</option></select>
+        </label>
+      </div>
+      <label>Email <input name="email" type="email" required placeholder="you@dlc.ui.edu.ng"></label>
+      <label>Password <input name="password" type="password" required minlength="6"></label>
+      <button class="btn primary block" type="submit" id="authSubmit">Log in</button>
+      <p id="authError" class="error" hidden></p>
+    </form>
+    <details class="demo">
+      <summary>Demo accounts (try it without registering)</summary>
+      <p>Lecturer: <code>demo@dlc.ui.edu.ng</code> / <code>demo1234</code><br>
+      Student: <code>ada@dlc.ui.edu.ng</code> / <code>demo1234</code></p>
+      <button class="btn small" type="button" id="demoLecturer">Fill lecturer demo</button>
+      <button class="btn small" type="button" id="demoStudent">Fill student demo</button>
+    </details>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashView" hidden>
+    <h2 id="dashWelcome">My dashboard</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>My teams</h3>
+        <ul id="teamList" class="list"></ul>
+        <form id="createTeamForm" class="inline-form">
+          <input name="courseCode" placeholder="Course code e.g. CSC 201" required>
+          <input name="courseTitle" placeholder="Course title e.g. Data Structures" required>
+          <button class="btn primary small" type="submit">Create team</button>
+        </form>
+        <form id="joinTeamForm" class="inline-form">
+          <input name="code" placeholder="Join code e.g. AB12CD" required>
+          <button class="btn small" type="submit">Join team</button>
+        </form>
+        <p id="teamMsg" class="muted"></p>
+      </div>
+      <div class="card">
+        <h3>Upcoming deadlines</h3>
+        <ul id="deadlineList" class="list"></ul>
+        <h3>Recent activity</h3>
+        <ul id="activityList" class="list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="teamView" hidden>
+    <button class="btn small ghost" id="backBtn" type="button">← Back to dashboard</button>
+    <h2 id="teamTitle"></h2>
+    <p class="muted" id="teamMeta"></p>
+    <div class="tabs" id="teamTabs">
+      <button class="tab active" data-tab="chat" type="button">Chat</button>
+      <button class="tab" data-tab="tasks" type="button">Tasks</button>
+      <button class="tab" data-tab="files" type="button">Files</button>
+      <button class="tab" data-tab="meetings" type="button">Meetings</button>
+      <button class="tab" data-tab="contrib" type="button">Contributions</button>
+    </div>
+
+    <div id="pane-chat" class="card pane">
+      <div id="chatBox" class="chat-box"></div>
+      <form id="chatForm" class="inline-form">
+        <input name="text" placeholder="Message the team… (use @Name to mention)" required autocomplete="off">
+        <button class="btn primary small" type="submit">Send</button>
+      </form>
+      <p class="muted tiny">Real-time when online; messages are saved and load again later.</p>
+    </div>
+
+    <div id="pane-tasks" class="card pane" hidden>
+      <form id="taskForm" class="inline-form wrap">
+        <input name="title" placeholder="Task title" required>
+        <input name="assigneeMatric" placeholder="Assign to matric no. (optional)">
+        <input name="deadline" type="date">
+        <select name="priority"><option>Low</option><option selected>Medium</option><option>High</option></select>
+        <button class="btn primary small" type="submit">Add task</button>
+      </form>
+      <div class="kanban">
+        <div class="col"><h4>To Do</h4><div id="colTodo" class="col-body"></div></div>
+        <div class="col"><h4>Doing</h4><div id="colDoing" class="col-body"></div></div>
+        <div class="col"><h4>Done</h4><div id="colDone" class="col-body"></div></div>
+      </div>
+    </div>
+
+    <div id="pane-files" class="card pane" hidden>
+      <form id="fileForm" class="inline-form">
+        <input name="file" type="file" required>
+        <button class="btn primary small" type="submit">Upload</button>
+      </form>
+      <ul id="fileList" class="list"></ul>
+    </div>
+
+    <div id="pane-meetings" class="card pane" hidden>
+      <form id="meetingForm" class="inline-form wrap">
+        <input name="title" placeholder="Meeting title" required>
+        <input name="dateTime" type="datetime-local" required>
+        <input name="agenda" placeholder="Agenda (optional)">
+        <button class="btn primary small" type="submit">Schedule (Jitsi link)</button>
+      </form>
+      <ul id="meetingList" class="list"></ul>
+    </div>
+
+    <div id="pane-contrib" class="card pane" hidden>
+      <h3>Who did what</h3>
+      <table class="table"><thead><tr><th>Member</th><th>Messages</th><th>Tasks done</th><th>Files</th><th>Total</th></tr></thead><tbody id="contribBody"></tbody></table>
+      <h3>Activity log</h3>
+      <ul id="contribActivity" class="list"></ul>
+    </div>
+  </section>
+</main>
+<footer class="footer">DLC Team Collaboration Platform — Distance Learning Centre, University of Ibadan. Text-first, low-bandwidth design.</footer>
+<script src="/app.js"></script>
+</body>
+</html>
