@@ -9,13 +9,11 @@ Designed text-first for mobile phones and low-bandwidth connections — no build
 step, no heavy framework on the frontend.
 
 > **Project:** Oloyede, Samuel (E052503, Group Leader); Awoyomi, Felix Oluwatosin (E052483); Odeyemi, Moses Oluwadamilola (E052470); Adeleke, Mercy (E052474); Adesoji, Jeremiah (E052479) — November, 2026
-> **Team members:** see front matter in the writeup (participation roles/contributions to be filled in by the Team Leader only)
+> **Team members:** see front matter in the writeup (participation set 20 Nov 2026: Group Leader 70%, each other member 7.5%)
 > **Supervisor / Head of Department:** Prof. B. F. Oladejo
-> **GitHub:** https://github.com/Samloyd005/Csc-476-group-40 — code in this folder is ready to push to that repository (create the repo on GitHub under Samloyd005, then push; it is not live on GitHub yet until pushed).
+> **GitHub:** https://github.com/Samloyd005/Csc-476-group-40 — the code is live here (public repo, main branch, commit e3d966f).
 
-![Screenshot placeholder — dashboard](docs/screenshot-dashboard.png)
-![Screenshot placeholder — team chat and Kanban](docs/screenshot-team.png)
-*(Add screenshots under `docs/` — see TEST-LOG.md for a verified run.)*
+Screenshots from the running system are in Figures 4.1–4.4 of the writeup.
 
 ## Features
 
